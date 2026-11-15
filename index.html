@@ -1036,7 +1036,8 @@ window.addEventListener("keydown", e => {
   </select>
   <div class="hint">Hacked mode changes the rarity roll, not the pet selection inside a rarity. A specific pet can be guaranteed once with Set next pull.</div>
   <div class="actions">
-   <button id="pcSecrets">Give all 6 secret pets</button>
+   <button id="pcAllPets">👑 GET ALL PETS</button>
+   <button id="pcSecrets" class="alt">Give all 6 secret pets</button>
    <button id="pcClose" class="alt">Close</button>
   </div>
   <div class="status" id="pcAdminStatus"></div>
@@ -1092,9 +1093,21 @@ window.addEventListener("keydown", e => {
  $id("pcClearNext").onclick=()=>{
    forcedNext=null;nextStatus.textContent="Next pull: random.";say("Forced next pull cleared.");
  };
+ $id("pcAllPets").onclick=()=>{
+   if(!U){say("Log in first, then use this button.");return;}
+   let count=0;
+   PACKS.forEach(p=>p.items.forEach((it,i)=>{
+     const key=p.id+i;
+     if(!S.own[key])count++;
+     S.own[key]=Math.max(1,Number(S.own[key])||0);
+   }));
+   secretKeys.forEach(k=>{if(!S.own[k])count++;S.own[k]=Math.max(1,Number(S.own[k])||0);});
+   refreshGame();
+   say("All pets unlocked! Added "+count+" previously missing pets to your collection.");
+ };
  $id("pcSecrets").onclick=()=>{
    if(!U){say("Log in first, then use this button.");return;}
-   secretKeys.forEach(k=>S.own[k]=1);
+   secretKeys.forEach(k=>S.own[k]=Math.max(1,Number(S.own[k])||0));
    refreshGame();say("All six secret pets added to your collection.");
  };
  // Keep the game's own pack data, art, reveal card, duplicate logic, and save system.
